@@ -64,7 +64,7 @@ for k in range(3):
 
 # get predictions on test datasets
 print('generating prediction on test datasets')
-test_df = generate_test_predictions_kernel(data, labels, params)
+test_df = generate_test_predictions(data, labels, params)
 submission_name = get_submission_name(params)
 sumbission_path = Path(params.result_dir, submission_name).as_posix()
 test_preds_df.to_csv(sumbission_path, index=False)
