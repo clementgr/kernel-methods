@@ -40,10 +40,10 @@ for k in range(3):
     (data_train[k], labels_train[k]), (data_val[k], labels_val[k]) = train_val_split(data[k], labels[k], val_size=params.val_size, seed=params.seed):
 
 # train and validate models on each dataset
-if params.kernel_type:
-    for k in range(3):
-        x_tr, y_tr = data_train[k], labels_train[k]
-        x_val, y_val = data_val[k], labels_val[k]
+for k in range(3):
+    x_tr, y_tr = data_train[k], labels_train[k]
+    x_val, y_val = data_val[k], labels_val[k]
+    if params.use_kernel:
         K_tr = get_kernel_matrix(x_tr, x_tr, params)
         K_tr_val = get_kernel_matrix(x_tr, x_val, params)
         lmbda = params.lmbdas[k]
@@ -51,23 +51,14 @@ if params.kernel_type:
         clf.fit(y_tr)
         pred_tr = clf.predict(K_tr)
         pred_val = clf.predict(K_tr_val)
-        acc_tr = accuracy(pred_tr, y_tr)
-        acc_val = accuracy(pred_val, y_val)
-        print(f'dataset: {k} | training accuracy: {acc_tr} | validation accuracy: {acc_val}')
-else:
-    for k in range(3):
-        x_tr, y_tr = data_train[k], labels_train[k]
-        x_val, y_val = data_val[k], labels_val[k]
-        K_tr = get_kernel_matrix(x_tr, x_tr, params)
-        K_tr_val = get_kernel_matrix(x_tr, x_val, params)
-        lmbda = params.lmbdas[k]
-        clf = get_kernel_classsifier(K_tr, params)
-        clf.fit(y_tr)
-        pred_tr = clf.predict(K_tr)
-        pred_val = clf.predict(K_tr_val)
-        acc_tr = accuracy(pred_tr, y_tr)
-        acc_val = accuracy(pred_val, y_val)
-        print(f'dataset: {k} | training accuracy: {acc_tr} | validation accuracy: {acc_val}')
+    else:
+        clf = get_classsifier(x_tr, y_tr, params)
+        clf.fit(x_tr, y_tr)
+        pred_tr = clf.predict(x_tr)
+        pred_val = clf.predict(x_val)
+    acc_tr = accuracy(pred_tr, y_tr)
+    acc_val = accuracy(pred_val, y_val)
+    print(f'dataset: {k} | training accuracy: {acc_tr} | validation accuracy: {acc_val}')
 
 # get predictions on test datasets
 print('generating prediction on test datasets')

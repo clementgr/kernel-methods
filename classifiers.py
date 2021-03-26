@@ -5,7 +5,7 @@ from cvxopt import solvers as cvxopt_solvers
 
 class LogisticRegression:
     
-    def __init__(self, params, lr=0.01, num_iter=10000, fit_intercept=True, verbose=False, print_freq=1000):
+    def __init__(self, params):
         
         self.lr = params.lr
         self.num_iter = params.num_iter
@@ -52,10 +52,10 @@ class LogisticRegression:
 
 class softSVM:
     
-    def __init__(self, X, y, C=10):
+    def __init__(self, X, y, params):
         
         m, n = X.shape
-        self.C = C
+        self.C = params.C
         self.Q = np.diag(y) @ X @ X.T @ np.diag(y)
         self.p = -np.ones((m,1))
         self.G = np.block([[np.eye(m)],[-np.eye(m)]])
@@ -131,6 +131,15 @@ class KernelSVM:
         
         preds = self.alpha_star.T @ K
         return np.sign(preds)
+
+
+def get_classsifier(x, y, params):
+
+    if params.clf == 'lr':
+        clf = LogisticRegression(params)
+    elif params.clf == 'svm':
+        clf = softSVM(X, y, params)      
+    return clf
 
 
 def get_kernel_classsifier(K, params):
