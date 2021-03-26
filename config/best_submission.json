@@ -12,5 +12,5 @@
     "k": [8,9,9],
     "mismatch": 1,
     "mismatch_weight": 0.1,
-    "lmbda": [1,1,1]
+    "lmbda": [0.125, 0.885, 0.455]
 }
