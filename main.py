@@ -16,6 +16,7 @@ print('------------ Options -------------')
 for k, v in vars(params).items():
     print('%s: %s' % (str(k), str(v)))
 print('-------------- End ----------------')
+print()
 
 np.random.seed(params.seed)
 name_dict = {'lr': 'Logistic Regression', 'svm': 'SVM', 'krr': 'Kernel Ridge Regression', 'ksvm': 'Kernel SVM'}

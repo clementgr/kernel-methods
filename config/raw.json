@@ -9,11 +9,8 @@
     "clf": "ksvm",
     "relabel": true,
     "use_kernel": true,
-    "kernel_type": "mismatch",
-    "sigma": 100,
+    "kernel_type": "spectrum",
     "k": 7,
-    "mismatch": 3,
-    "mismatch_weight": 1,
-    "lmbda": 1e-7
+    "lmbda": 5e-2
 }
 
