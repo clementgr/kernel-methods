@@ -59,7 +59,7 @@ class softSVM:
         self.Q = np.diag(y) @ X @ X.T @ np.diag(y)
         self.p = -np.ones((m,1))
         self.G = np.block([[np.eye(m)],[-np.eye(m)]])
-        self.h = np.block([[C*np.ones((m,1))],[-np.zeros((m,1))]])
+        self.h = np.block([[self.C*np.ones((m,1))],[-np.zeros((m,1))]])
         self.A = y.reshape(1,-1) * 1.
         self.b = np.zeros(1)
 
@@ -81,6 +81,7 @@ class softSVM:
         sv_y = y[ind].reshape(-1,1)
         self.bias = sv_y - np.dot(sv_x, self.primal_sol)
         self.bias = np.mean(self.bias)
+        print()
  
     def predict(self, X):
         preds = np.sign((X @ self.primal_sol) + self.bias).T
@@ -138,7 +139,7 @@ def get_classsifier(x, y, params):
     if params.clf == 'lr':
         clf = LogisticRegression(params)
     elif params.clf == 'svm':
-        clf = softSVM(X, y, params)      
+        clf = softSVM(x, y, params)      
     return clf
 
 

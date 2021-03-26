@@ -36,7 +36,7 @@ data = []
 labels = []
 for k in range(3):
     if params.data_type == 'mat100':
-        data_df = pd.read_csv(Path(params.data_dir, f'Xtr{k}_mat100.csv'))
+        data_df = pd.read_csv(Path(params.data_dir, f'Xtr{k}_mat100.csv'), header=None, delimiter=' ')
         data.append(data_df)
     else:
         data_df = pd.read_csv(Path(params.data_dir, f'Xtr{k}.csv'))
@@ -53,11 +53,11 @@ if params.relabel:
 if params.val_before_train:
     for k in range(3):
         (data_train, labels_train), (data_val, labels_val) = train_val_split(data[k], labels[k], val_size=params.val_size, seed=params.seed)
-        params.k = k_list[k]
-        params.lmbda = lmbda_list[k]
         x_tr, y_tr = data_train, labels_train['Bound'].values
         x_val, y_val = data_val, labels_val['Bound'].values
         if params.use_kernel:
+            params.k = k_list[k]
+            params.lmbda = lmbda_list[k]
             K_tr = get_kernel_matrix(x_tr, x_tr, params)
             K_tr_val = get_kernel_matrix(x_tr, x_val, params)
             clf = get_kernel_classsifier(K_tr, params)
@@ -65,6 +65,7 @@ if params.val_before_train:
             pred_tr = clf.predict(K_tr)
             pred_val = clf.predict(K_tr_val)
         else:
+            x_tr, x_val = x_tr.values, x_val.values
             clf = get_classsifier(x_tr, y_tr, params)
             clf.fit(x_tr, y_tr)
             pred_tr = clf.predict(x_tr)
@@ -76,7 +77,7 @@ if params.val_before_train:
 
 # get predictions on test datasets
 print('generating prediction on test datasets\n')
-test_preds_df = generate_test_predictions(data, labels, k_list, lmbda_list, params)
+test_preds_df = generate_test_predictions(data, labels, params, k_list, lmbda_list)
 submission_name = get_submission_name(params)
 sumbission_path = Path(params.result_dir, submission_name)
 sumbission_path.parent.mkdir(parents=True, exist_ok=True)

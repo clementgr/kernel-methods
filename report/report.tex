@@ -14,6 +14,7 @@
 \usepackage{subcaption}
 \captionsetup{compatibility=false}
 \usepackage{graphicx}
+\usepackage{bbm}
 
 % Include other packages here, before hyperref.
 
@@ -43,7 +44,7 @@
 	\maketitle
 	
 	\begin{abstract}
-		In this report, I emphasize my work for the challenge organized as part of the Kernel Methods class. The goal of the challenge was to learn how to implement kernel-based machine learning algorithms, gain understanding about them and adapt them to structural data. To that end, teachers chose a DNA sequence classification task. Through iterations in model definition and data representation, I highlight the pros and cons of the different methods I tried, resulting in a $0.65$ classification accuracy on the academic leaderboard. My code is publicly available at \small{\url{https://github.com/clementgr/kernel-methods}}
+		In this report, I emphasize my work for the challenge organized as part of the Kernel Methods class. The goal of the challenge was to learn how to implement kernel-based machine learning algorithms, gain understanding about them and adapt them to structural data. To that end, teachers chose a DNA sequence classification task. Through iterations in model definition and data representation, I highlight the pros and cons of the different methods I tried, resulting in a $0.65200$ classification accuracy on the public leaderboard and $0.64733$ on the private leaderboard. My code is publicly available at \small{\url{https://github.com/clementgr/kernel-methods}}
 	\end{abstract}
 	
 	\vspace{-3mm}
@@ -58,25 +59,121 @@
 	
 	\section{Classifiers}
 	
-	I implemented different classifiers for the sequence classification task.
+	I implemented different classifiers for the sequence classification task. Each classifier aims at solving the following optimization problem, each with a different loss function $\ell$:
+
+	\vspace{-1mm}
 	
+	\begin{equation*}\tag{$\star$}
+		\begin{aligned}
+			\min_{f \in \mathcal{H}}  \hspace{1mm} \dfrac{1}{n} \sum_{i=1}^{n} \ell  \left( f(x_i), y_i \right) + \lambda \vert \vert f \vert \vert_\mathcal{H}^2
+		\end{aligned}
+	\end{equation*}
+
 	\subsection{Logistic Regression}
 	
-	\subsection{Support Vector Machines} 
+	Logistic regression is an algorithm often used in machine learning problems, which models the probability that a given input belongs to one of two different classes (binary classification). It can be viewed as solving $(\star)$ with the specific logistic loss:
 	
-	soft, using \texttt{convexopt} optimization package for solving quadratic programs.
+	\vspace{-2mm}
+	
+	\begin{equation*}
+		\begin{aligned}
+			\ell  \left( f(x), y \right) = \ln \left(1+e^{-yf(x)} \right)
+		\end{aligned}
+	\end{equation*}
+	
+	\noindent
+	and the functionnal space:
+	
+	\vspace{-4mm}
+	
+	\begin{equation*}
+		\begin{aligned}
+			\mathcal{H} = \{ w \in \mathbb{R}^n, \beta \in \mathbb{R}  \textit{ } \vert \textit{ } f(x) = \sigma(w^\top x + \beta) \}
+		\end{aligned}
+	\end{equation*}
+	
+	\noindent
+	Equation $(\star)$ is then a smooth convex optimization problem, efficiently solved by gradient descent.
+	
+	\subsection{Support Vector Machine} 
+	
+	Support Vector Machine (SVM) is another supervised learning model soft, which can be viewed as solving $(\star)$ with the specific hinge loss:
+	
+	\vspace{-2mm}
+	
+	\begin{equation*}
+		\begin{aligned}
+			\ell  \left( f(x), y \right) = \max \left(1-yf(x), 0 \right)
+		\end{aligned}
+	\end{equation*}
+	
+	\noindent
+	This time, the objective function of $(\star)$ is not smooth. Hence, it's common practice to introduce slack variables to reformulate $(\star)$ as a quadratic program, that is the minimization of a convex quadratic function with linear constraints:
+	
+	\begin{equation*}\tag{\text{SVM}}
+		\begin{aligned}
+			\min_{w,z} \quad & \dfrac{1}{2} \vert\vert w \vert\vert_{2}^{2} + C \cdot \mathbbm{1}^T z \\
+			\textrm{s.t.} \quad & y_i(w^Tx_i) \geq 1 - z_i \\
+			& z \geq 0
+		\end{aligned}
+	\end{equation*}
+	\noindent
+	Quadratic programs are efficiently solved using any optimization package. I chose \texttt{convexopt}.
 	
 	\subsection{Kernel Ridge Regression}
 	
+	If we consider $\mathcal{H}$ a RKHS associated to a p.d. kernel $\mathbf{K}$ on $\mathcal{X}$, then Kernel Ridge Regression is obtained by regularizing the MSE criterion by the RKHS norm. 
+	
+	\begin{equation*}\tag{$\text{KRR}$}
+		\begin{aligned}
+			\min_{f \in \mathcal{H}}  \hspace{1mm} \dfrac{1}{n} \sum_{i=1}^{n}  \left( f(x_i) - y_i \right)^2 + \lambda \vert \vert f \vert \vert_\mathcal{H}^2
+		\end{aligned}
+	\end{equation*}
+	
+	\noindent
+	By the representer theorem, (KRR) is equivalent to:
+	\vspace{-2mm}
+		
+	\begin{equation*}
+		\underset{\boldsymbol{\alpha} \in \mathbb{R}^{n}}{\min } \textit{ } \frac{1}{n}(\mathbf{K} \boldsymbol{\alpha}-\mathbf{y})^{\top}(\mathbf{K} \boldsymbol{\alpha}-\mathbf{y})+\lambda \boldsymbol{\alpha}^{\top} \mathbf{K} \boldsymbol{\alpha}
+	\end{equation*}
+	\noindent
+	which is a convex and differentiable problem in $\boldsymbol{\alpha}$ and admits the closed form solution:
+	
+	\begin{equation*}
+		\begin{aligned}
+			\boldsymbol{\alpha}^* = \left( \mathbf{K} + \lambda n \mathbf{I} \right)^{-1} \mathbf{y}
+		\end{aligned}
+	\end{equation*}
+	
 	\subsection{Kernel SVM} 
 	
-	soft, using \texttt{cvxpy} optimization package for solving quadratic programs
+	Here again, considering $\mathcal{H}$ a RKHS associated to a p.d. kernel $\mathbf{K}$ on $\mathcal{X}$, then Kernel SVM is obtained by rewriting (SVM) using the representer theorem. This gives a quadratic program in $\boldsymbol{\alpha}$:
+	\vspace{-8mm}
+	\begin{center}
+			\begin{equation*}\tag{\text{kSVM}}
+				\begin{aligned}
+					\max_{\boldsymbol{\alpha} \in \mathbb{R}^n} \quad & 2 \boldsymbol{\alpha}^{\top} \mathbf{y}-\boldsymbol{\alpha}^{\top} \mathbf{K} \boldsymbol{\alpha}\\
+					\textrm{s.t.} \quad & 0  \preceq \boldsymbol{\alpha}^{\top} \mathbf{y} \preceq \dfrac{\mathbbm{1}}{2 \lambda n} 
+				\end{aligned}                                      
+			\end{equation*}	
+	\end{center}
+	\noindent
+	Again, I used \texttt{cvxpy} to solve this problem.
+	
 	
 	\section{Working with Numeric Data}
 	
-	Teachers provided us with numerical feature matrices based on bag of words representation. Subsequences of length $\ell = 10$ were extracted from the DNA sequences and one-hot encoded. Then, they were clustered into $100$ clusters using Kmeans: each subsequence was assigned to a cluster $i$, thus represented by a binary vector whose coefficients are equal to $0$ except the $i$-th one, which is equal to $1$. The feature vector of each sequence simply consisted in the average of the representations of all its subsequences.
+	Teachers provided us with numerical feature matrices based on bag of words representation. 
 	
-	\subsection{Radial-basis Function Kernel}
+	\subsection{Logistic Regression Baseline}
+	
+	The idea was to have reference results against which I could compare the performances of the more sophisticated models I would later develop. I decided to go with a simple baseline: train a logistic regression on the numerical feature matrices provided by the teachers. This achieved $0.60466$ on the public academic leaderboard.
+	
+	\subsection{Switching to Support Vector Machines}
+		
+	
+	\subsection{Using the Radial-basis Function Kernel}
 	
 	\section{Working with Raw DNA Sequences}
 	

@@ -1,0 +1,14 @@
+{
+    "data_type": "mat100",
+    "data_dir": "data/mat100",
+    "label_dir": "data/labels",
+    "result_dir": "submissions",
+    "seed": 21,
+    "val_before_train": true,
+    "val_size": 0.3,
+    "clf": "svm",
+    "relabel": true,
+    "use_kernel": false,
+    "C": 10
+}
+
