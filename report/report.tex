@@ -1,0 +1,142 @@
+% This version of CVPR template is provided by Ming-Ming Cheng.
+% Please leave an issue if you found a bug:
+% https://github.com/MCG-NKU/CVPR_Template.
+
+\documentclass[final]{cvpr}
+
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[numbers]{natbib}
+\usepackage{notoccite}
+\usepackage{subcaption}
+\captionsetup{compatibility=false}
+\usepackage{graphicx}
+
+% Include other packages here, before hyperref.
+
+% If you comment hyperref and then uncomment it, you should delete
+% egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+% run, let it finish, and you should be clear).
+\usepackage[pagebackref=true,breaklinks=true,colorlinks,bookmarks=false]{hyperref}
+
+
+\def\cvprPaperID{34} % *** Enter the CVPR Paper ID here
+\def\confYear{CVPR 2021}
+%\setcounter{page}{4321} % For final version only
+
+
+\begin{document}
+	
+	%%%%%%%%% TITLE
+	\title{ Kernel Methods Challenge\\
+		\vspace{1mm}
+		\large \normalfont Predicting Whether a DNA Sequence Region is Binding Site to a Specific Transcription Factor}
+	
+	\author{\textbf{Clément Grisi}\\
+		Team Name: clems\\
+		\small \url{grisi.clement@gmail.com}
+	}
+	
+	\maketitle
+	
+	\begin{abstract}
+		In this report, I emphasize my work for the challenge organized as part of the Kernel Methods class. The goal of the challenge was to learn how to implement kernel-based machine learning algorithms, gain understanding about them and adapt them to structural data. To that end, teachers chose a DNA sequence classification task. Through iterations in model definition and data representation, I highlight the pros and cons of the different methods I tried, resulting in a $0.65$ classification accuracy on the academic leaderboard. My code is publicly available at \small{\url{https://github.com/clementgr/kernel-methods}}
+	\end{abstract}
+	
+	\vspace{-3mm}
+	
+	\section{Introduction}
+	
+	Transcription factors (TFs) are regulatory proteins that bind specific sequence motifs in the genome to activate or repress transcription of target genes. Genome-wide protein-DNA binding maps can be profiled using some experimental techniques and thus all genomics can be classified into two classes for a TF of interest: bound or unbound. The challenge consists in predicting whether a DNA sequence region is binding site to a specific TF.\\
+	\\
+	\textbf{Dataset:} we had to work with three datasets corresponding to three different transcription factors. Each training set contained $2000$ sequences, while each testing set contained $1000$. Predictions had to be made separately for each train-test dataset pair.\\
+	\\
+	\textbf{Evaluation Metric:} the performance is measured using the classification accuracy. The final score is computed by taking the average of the scores from public and private leaderboards.
+	
+	\section{Classifiers}
+	
+	I implemented different classifiers for the sequence classification task.
+	
+	\subsection{Logistic Regression}
+	
+	\subsection{Support Vector Machines} 
+	
+	soft, using \texttt{convexopt} optimization package for solving quadratic programs.
+	
+	\subsection{Kernel Ridge Regression}
+	
+	\subsection{Kernel SVM} 
+	
+	soft, using \texttt{cvxpy} optimization package for solving quadratic programs
+	
+	\section{Working with Numeric Data}
+	
+	Teachers provided us with numerical feature matrices based on bag of words representation. Subsequences of length $\ell = 10$ were extracted from the DNA sequences and one-hot encoded. Then, they were clustered into $100$ clusters using Kmeans: each subsequence was assigned to a cluster $i$, thus represented by a binary vector whose coefficients are equal to $0$ except the $i$-th one, which is equal to $1$. The feature vector of each sequence simply consisted in the average of the representations of all its subsequences.
+	
+	\subsection{Radial-basis Function Kernel}
+	
+	\section{Working with Raw DNA Sequences}
+	
+	\subsection{k-Spectrum Kernel}
+	
+	\cite{spectrum}
+	
+	\subsection{Mismatch Kernel}
+	
+	\cite{mismatch}
+
+	
+	\section{Conclusion}
+	
+	
+	{\small
+		\bibliographystyle{unsrt}
+		\bibliography{egbib}
+	}
+	
+	\clearpage
+	
+	\begin{figure}[h!]
+	\centering
+	\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/spectrum/val_acc_multiple_k_dataset0.pdf}
+	\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/spectrum/val_acc_multiple_k_dataset1.pdf}
+	\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/spectrum/val_acc_multiple_k_dataset2.pdf}
+	\caption{\centering Validation Accuracy for Different k-Spectrum Kernels as a Function of Regularization Parameter $\lambda$}
+	\label{fig:acc_spectrum}
+	\end{figure}
+	
+	\newpage
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/spectrum/val_acc_lambda_multiple_k_dataset0.pdf}
+		\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/spectrum/val_acc_lambda_multiple_k_dataset1.pdf}
+		\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/spectrum/val_acc_lambda_multiple_k_dataset2.pdf}
+		\caption{\centering Optimal Regularization Parameter $\lambda$ for Different k-Spectrum Kernels}
+		\label{fig:lambda_spectrum}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/mismatch/val_acc_multiple_k_dataset0_mismatch.pdf}
+		\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/mismatch/val_acc_multiple_k_dataset1_mismatch.pdf}
+		\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/mismatch/val_acc_multiple_k_dataset2_mismatch.pdf}
+		\caption{\centering Validation Accuracy for Different Mismatch Kernels as a Function of Regularization Parameter $\lambda$}
+		\label{fig:acc_mismatch}
+	\end{figure}
+	
+	\newpage
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/mismatch/val_acc_lambda_multiple_k_dataset0_mismatch.pdf}
+		\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/mismatch/val_acc_lambda_multiple_k_dataset1_mismatch.pdf}
+		\includegraphics[width=9cm, trim=2cm 2cm 2cm 2cm, clip]{fig/mismatch/val_acc_lambda_multiple_k_dataset2_mismatch.pdf}
+		\caption{\centering Optimal Regularization Parameter $\lambda$ for Different Mismatch Kernels}
+		\label{fig:lambda_mismatch}
+	\end{figure}
+		
+\end{document}
