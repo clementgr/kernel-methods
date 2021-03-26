@@ -4,7 +4,7 @@ import pandas as pd
 from pathlib import Path
 import matplotlib.pyplot as plt
 
-from utils import open_config_file, train_val_split, get_kernel_matrix, generate_test_predictions_kernel, get_submission_name
+from utils import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--config', type=str, default="config/raw.json", help='config file')
@@ -17,6 +17,8 @@ for k, v in vars(params).items():
 print('-------------- End ----------------')
 
 np.random.seed(params.seed)
+name_dict = {'lr': 'Logistic Regression', 'svm': 'SVM', 'krr': 'Kernel Ridge Regression', 'ksvm': 'Kernel SVM'}
+classifer_name = name_dict[params.clf]
 
 # loading data
 data = []
@@ -58,15 +60,12 @@ for k in range(3):
         pred_val = clf.predict(x_val)
     acc_tr = accuracy(pred_tr, y_tr)
     acc_val = accuracy(pred_val, y_val)
-    print(f'dataset: {k} | training accuracy: {acc_tr} | validation accuracy: {acc_val}')
+    print(f'classifier: {classifier_name} | dataset: {k} | training accuracy: {acc_tr} | validation accuracy: {acc_val}')
 
 # get predictions on test datasets
 print('generating prediction on test datasets')
-if params.kernel_type:
-    test_df = generate_test_predictions_kernel(data, labels, params)
-    submission_name = get_submission_name(params)
-else:
-
+test_df = generate_test_predictions_kernel(data, labels, params)
+submission_name = get_submission_name(params)
 sumbission_path = Path(params.result_dir, submission_name).as_posix()
 test_preds_df.to_csv(sumbission_path, index=False)
 print(f'result successfully saved at: {sumbission_path}')

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from scipy.spatial.distance import cdist
 from sklearn.model_selection import train_test_split
 
-from classifiers import get_kernel_classsifier
+from classifiers import get_kernel_classsifier, get_classsifier
 
 class AttrDict(dict):
     def __init__(self, *args, **kwargs):
@@ -120,7 +120,7 @@ def get_kernel_matrix(x1, x2, params):
     return K
 
 
-def generate_test_predictions_kernel(data, labels, params):
+def generate_test_predictions(data, labels, params):
     ids = []
     bounds = []
     for i, (x_tr, y_tr) in enumerate(zip(data, labels)):
@@ -128,9 +128,13 @@ def generate_test_predictions_kernel(data, labels, params):
         print(f'processing dataset {i}...')
         start_time = time.time()
 
-        K_tr = get_kernel_matrix(x_tr, x_tr, params)
-        clf = get_kernel_classsifier(K_tr, params)
-        clf.fit(y_tr)
+        if params.use_kernel:
+            K_tr = get_kernel_matrix(x_tr, x_tr, params)
+            clf = get_kernel_classsifier(K_tr, params)
+            clf.fit(y_tr)
+        else:
+            clf = get_classsifier(x_tr, y_tr, params)
+            clf.fit(x_tr, y_tr)
 
         if params.data_type = 'mat100':
             test_data_path = Path(params.data_dir, f'Xte{i}_mat100.csv')
@@ -140,9 +144,11 @@ def generate_test_predictions_kernel(data, labels, params):
         ids.extend([f'{1000*i+j}' for j in test_df.index.tolist()])
         
         x_te = test_df.values
-        K_te = get_kernel_matrix(x_tr, x_te, params)
-        
-        preds = clf.predict(K_te)
+        if params.use_kernel:
+            K_te = get_kernel_matrix(x_tr, x_te, params)
+            preds = clf.predict(K_te)
+        else:
+            preds = clf.predict(x_te)
         bounds.extend([int(p) for p in preds.tolist()])
 
         end_time = time.time()
@@ -150,17 +156,22 @@ def generate_test_predictions_kernel(data, labels, params):
         print(f'done! time taken: {dataset_mins}m {dataset_secs}s)')
     
     test_preds_df = pd.DataFrame({'Id': ids, 'Bound': bounds})
-    test_preds_df['Bound'] = test_preds_df['Bound'].apply(lambda b: 0 if b == -1 else b)
+    if params.relabel:
+        test_preds_df['Bound'] = test_preds_df['Bound'].apply(lambda b: 0 if b == -1 else b)
 
     return test_preds_df
 
 
 def get_submission_name(params):
-    if params.kernel_type == 'rbf':
-        return f'rbf_sigma={params.sigma}_lambda={params.lmbda}.csv'
-    elif params.kernel_type == 'spectrum':
-        return f'{params.k}-spectrum_lambda={params.lmbda}.csv'
-    elif params.kernel_type == 'mismatch':
-        return f'{params.k}-spectrum_{params.mismatch}-mismatch_weight={params.mismatch_weight}_lambda={params.lmbda}.csv'
+    if params.use_kernel:
+        if params.kernel_type == 'rbf':
+            return f'rbf_sigma={params.sigma}_lambda={params.lmbda}_{params.clf}.csv'
+        elif params.kernel_type == 'spectrum':
+            return f'{params.k}-spectrum_lambda={params.lmbda}_{params.clf}.csv'
+        elif params.kernel_type == 'mismatch':
+            return f'{params.k}-spectrum_{params.mismatch}-mismatch_weight={params.mismatch_weight}_lambda={params.lmbda}_{params.clf}.csv'
+        else:
+            raise KeyError(f'{params.kernel_type} not supported!')
     else:
-        raise KeyError(f'{params.kernel_type} not supported!')
+        return f'{params.clf}.csv'
+    
