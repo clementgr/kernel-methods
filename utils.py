@@ -166,7 +166,7 @@ def generate_test_predictions(data, labels, k_list, lmbda_list, params):
         end_time = time.time()
         dataset_mins, dataset_secs = get_time(start_time, end_time)
         print(f'finished processing dataset {i}!')
-        print(f'time taken: {dataset_mins}m {dataset_secs}s\n)
+        print(f'time taken: {dataset_mins}m {dataset_secs}s\n')
     
     test_preds_df = pd.DataFrame({'Id': ids, 'Bound': bounds})
     if params.relabel:
