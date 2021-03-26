@@ -19,6 +19,10 @@ print('-------------- End ----------------')
 np.random.seed(params.seed)
 name_dict = {'lr': 'Logistic Regression', 'svm': 'SVM', 'krr': 'Kernel Ridge Regression', 'ksvm': 'Kernel SVM'}
 classifer_name = name_dict[params.clf]
+if params.use_kernel and isinstance(params.k, int):
+    k_list = [params.k]*3
+if params.use_kernel and isinstance(params.lmbda, int):
+    lmbda_list = [params.lmbda]*3
 
 # loading data
 data = []
@@ -43,6 +47,8 @@ for k in range(3):
 
 # train and validate models on each dataset
 for k in range(3):
+    params.k = k_list[k]
+    params.lmbda = lmbda_list[k]
     x_tr, y_tr = data_train[k], labels_train[k]
     x_val, y_val = data_val[k], labels_val[k]
     if params.use_kernel:
@@ -64,7 +70,7 @@ for k in range(3):
 
 # get predictions on test datasets
 print('generating prediction on test datasets')
-test_df = generate_test_predictions(data, labels, params)
+test_df = generate_test_predictions(data, labels, k_list, lmbda_list, params)
 submission_name = get_submission_name(params)
 sumbission_path = Path(params.result_dir, submission_name).as_posix()
 test_preds_df.to_csv(sumbission_path, index=False)

@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 
 from classifiers import get_kernel_classsifier, get_classsifier
 
+
 class AttrDict(dict):
     def __init__(self, *args, **kwargs):
         super(AttrDict, self).__init__(*args, **kwargs)
@@ -21,6 +22,7 @@ def open_config_file(filepath):
         pdict = json.load(jsonfile)
         params = AttrDict(pdict)
     return params
+
 
 def get_time(start_time, end_time):
     elapsed_time = end_time - start_time
@@ -120,11 +122,13 @@ def get_kernel_matrix(x1, x2, params):
     return K
 
 
-def generate_test_predictions(data, labels, params):
+def generate_test_predictions(data, labels, k_list, lmbda_list, params):
     ids = []
     bounds = []
     for i, (x_tr, y_tr) in enumerate(zip(data, labels)):
         
+        params.k = k_list[i]
+        params.lmbda = lmbda_list[i]
         print(f'processing dataset {i}...')
         start_time = time.time()
 
