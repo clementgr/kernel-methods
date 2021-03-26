@@ -20,7 +20,7 @@ print()
 
 np.random.seed(params.seed)
 name_dict = {'lr': 'Logistic Regression', 'svm': 'SVM', 'krr': 'Kernel Ridge Regression', 'ksvm': 'Kernel SVM'}
-classifer_name = name_dict[params.clf]
+classifier_name = name_dict[params.clf]
 if params.use_kernel:
     if isinstance(params.k, int):
         k_list = [params.k]*3
@@ -55,12 +55,11 @@ if params.val_before_train:
         (data_train, labels_train), (data_val, labels_val) = train_val_split(data[k], labels[k], val_size=params.val_size, seed=params.seed)
         params.k = k_list[k]
         params.lmbda = lmbda_list[k]
-        x_tr, y_tr = data_train, labels_train
-        x_val, y_val = data_val, labels_val
+        x_tr, y_tr = data_train, labels_train['Bound'].values
+        x_val, y_val = data_val, labels_val['Bound'].values
         if params.use_kernel:
             K_tr = get_kernel_matrix(x_tr, x_tr, params)
             K_tr_val = get_kernel_matrix(x_tr, x_val, params)
-            lmbda = params.lmbdas[k]
             clf = get_kernel_classsifier(K_tr, params)
             clf.fit(y_tr)
             pred_tr = clf.predict(K_tr)
@@ -73,6 +72,7 @@ if params.val_before_train:
         acc_tr = accuracy(pred_tr, y_tr)
         acc_val = accuracy(pred_val, y_val)
         print(f'classifier: {classifier_name} | dataset: {k} | training accuracy: {acc_tr} | validation accuracy: {acc_val}')
+    print()
 
 # get predictions on test datasets
 print('generating prediction on test datasets\n')

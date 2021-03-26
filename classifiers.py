@@ -97,7 +97,6 @@ class KernelRidgeRegression:
     
     def fit(self, y):
         
-        y = y['Bound'].values
         I = np.eye(self.m)
         y = y.reshape(-1,1)
         self.alpha = np.linalg.solve(self.K+self.lmbda*self.m*I, y)
@@ -119,7 +118,6 @@ class KernelSVM:
     
     def fit(self, y):
         
-        y = y['Bound'].values
         objective = cp.Maximize(2*self.alpha.T @ y - cp.quad_form(self.alpha, self.K))
         constraints = [
             0 <= cp.multiply(y,self.alpha), 
@@ -147,7 +145,7 @@ def get_classsifier(x, y, params):
 def get_kernel_classsifier(K, params):
 
     if params.clf == 'krr':
-        clf = KernelRidgeRegression(K, params.lmbda)
+        clf = KernelRidgeRegression(K, lmbda=params.lmbda)
     elif params.clf == 'ksvm':
-        clf = KernelSVM(K, params.lmbda)      
+        clf = KernelSVM(K, lmbda=params.lmbda)      
     return clf

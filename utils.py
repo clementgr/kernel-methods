@@ -129,6 +129,7 @@ def generate_test_predictions(data, labels, k_list, lmbda_list, params):
     bounds = []
     for i, (x_tr, y_tr) in enumerate(zip(data, labels)):
         
+        y_tr = y_tr['Bound'].values
         params.k = k_list[i]
         params.lmbda = lmbda_list[i]
         print(f'processing dataset {i}...')
