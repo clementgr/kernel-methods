@@ -152,9 +152,10 @@ def generate_test_predictions(data, labels, k_list, lmbda_list, params):
 
         if params.data_type == 'mat100':
             test_data_path = Path(params.data_dir, f'Xte{i}_mat100.csv')
+            test_df = pd.read_csv(test_data_path.as_posix(), header=None, delimiter=' ')
         else:
             test_data_path = Path(params.data_dir, f'Xte{i}.csv')
-        test_df = pd.read_csv(test_data_path.as_posix(), header=None, delimiter=' ')
+            test_df = pd.read_csv(test_data_path.as_posix())
         ids.extend([f'{1000*i+j}' for j in test_df.index.tolist()])
         
         if params.use_kernel:
