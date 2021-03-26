@@ -39,34 +39,30 @@ if params.relabel:
     for k in range(3):
         labels[k][labels[k] == 0] = -1
 
-# train/val split
-data_train, data_val = [], []
-labels_train, labels_val = [], []
-for k in range(3):
-    (data_train[k], labels_train[k]), (data_val[k], labels_val[k]) = train_val_split(data[k], labels[k], val_size=params.val_size, seed=params.seed):
-
 # train and validate models on each dataset
-for k in range(3):
-    params.k = k_list[k]
-    params.lmbda = lmbda_list[k]
-    x_tr, y_tr = data_train[k], labels_train[k]
-    x_val, y_val = data_val[k], labels_val[k]
-    if params.use_kernel:
-        K_tr = get_kernel_matrix(x_tr, x_tr, params)
-        K_tr_val = get_kernel_matrix(x_tr, x_val, params)
-        lmbda = params.lmbdas[k]
-        clf = get_kernel_classsifier(K_tr, params)
-        clf.fit(y_tr)
-        pred_tr = clf.predict(K_tr)
-        pred_val = clf.predict(K_tr_val)
-    else:
-        clf = get_classsifier(x_tr, y_tr, params)
-        clf.fit(x_tr, y_tr)
-        pred_tr = clf.predict(x_tr)
-        pred_val = clf.predict(x_val)
-    acc_tr = accuracy(pred_tr, y_tr)
-    acc_val = accuracy(pred_val, y_val)
-    print(f'classifier: {classifier_name} | dataset: {k} | training accuracy: {acc_tr} | validation accuracy: {acc_val}')
+if params.val_before_train:
+    for k in range(3):
+        (data_train, labels_train), (data_val, labels_val) = train_val_split(data[k], labels[k], val_size=params.val_size, seed=params.seed):
+        params.k = k_list[k]
+        params.lmbda = lmbda_list[k]
+        x_tr, y_tr = data_train, labels_train
+        x_val, y_val = data_val, labels_val
+        if params.use_kernel:
+            K_tr = get_kernel_matrix(x_tr, x_tr, params)
+            K_tr_val = get_kernel_matrix(x_tr, x_val, params)
+            lmbda = params.lmbdas[k]
+            clf = get_kernel_classsifier(K_tr, params)
+            clf.fit(y_tr)
+            pred_tr = clf.predict(K_tr)
+            pred_val = clf.predict(K_tr_val)
+        else:
+            clf = get_classsifier(x_tr, y_tr, params)
+            clf.fit(x_tr, y_tr)
+            pred_tr = clf.predict(x_tr)
+            pred_val = clf.predict(x_val)
+        acc_tr = accuracy(pred_tr, y_tr)
+        acc_val = accuracy(pred_val, y_val)
+        print(f'classifier: {classifier_name} | dataset: {k} | training accuracy: {acc_tr} | validation accuracy: {acc_val}')
 
 # get predictions on test datasets
 print('generating prediction on test datasets')

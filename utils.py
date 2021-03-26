@@ -133,12 +133,17 @@ def generate_test_predictions(data, labels, k_list, lmbda_list, params):
         start_time = time.time()
 
         if params.use_kernel:
+            print(f'computing kernel matrix for training data...')
             K_tr = get_kernel_matrix(x_tr, x_tr, params)
+            print(f'done! fitting classifier on training data...')
             clf = get_kernel_classsifier(K_tr, params)
             clf.fit(y_tr)
+            print(f'done!')
         else:
+            print(f'fitting classifier on training data...')
             clf = get_classsifier(x_tr, y_tr, params)
             clf.fit(x_tr, y_tr)
+            print(f'done!')
 
         if params.data_type = 'mat100':
             test_data_path = Path(params.data_dir, f'Xte{i}_mat100.csv')
@@ -149,15 +154,20 @@ def generate_test_predictions(data, labels, k_list, lmbda_list, params):
         
         x_te = test_df.values
         if params.use_kernel:
+             print(f'computing kernel matrix for testing data...')
             K_te = get_kernel_matrix(x_tr, x_te, params)
+            print(f'done! using fitted classifier to make prediction on testing data...')
             preds = clf.predict(K_te)
+            print('done!')
         else:
+            print(f'done! using fitted classifier to make prediction on testing data...')
             preds = clf.predict(x_te)
+            print('done!')
         bounds.extend([int(p) for p in preds.tolist()])
 
         end_time = time.time()
         dataset_mins, dataset_secs = get_time(start_time, end_time)
-        print(f'done! time taken: {dataset_mins}m {dataset_secs}s)')
+        print(f'finished processing dataset {i}! time taken: {dataset_mins}m {dataset_secs}s)')
     
     test_preds_df = pd.DataFrame({'Id': ids, 'Bound': bounds})
     if params.relabel:
