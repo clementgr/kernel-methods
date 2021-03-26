@@ -97,6 +97,7 @@ class KernelRidgeRegression:
     
     def fit(self, y):
         
+        y = y['Bound'].values
         I = np.eye(self.m)
         y = y.reshape(-1,1)
         self.alpha = np.linalg.solve(self.K+self.lmbda*self.m*I, y)
@@ -118,7 +119,8 @@ class KernelSVM:
     
     def fit(self, y):
         
-        objective = cp.Maximize(2*self.alpha.T@y - cp.quad_form(self.alpha, self.K))
+        y = y['Bound'].values
+        objective = cp.Maximize(2*self.alpha.T @ y - cp.quad_form(self.alpha, self.K))
         constraints = [
             0 <= cp.multiply(y,self.alpha), 
             cp.multiply(y,self.alpha) <= 1/2/self.lmbda/self.m
