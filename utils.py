@@ -49,6 +49,10 @@ def RBF_kernel(x1, x2, sigma=100):
 
 
 def spectrum_kernel(x1, x2, k=6):
+    
+    x1 = x1['seq'].values.tolist()
+    x2 = x2['seq'].values.tolist()
+    
     A_k = {''.join(s): i for i, s in enumerate(product(['A', 'T', 'G', 'C'], repeat=k))}
     phi_1 = np.zeros((len(x1), len(A_k)))
     phi_2 = np.zeros((len(x2), len(A_k)))
@@ -153,13 +157,14 @@ def generate_test_predictions(data, labels, k_list, lmbda_list, params):
         test_df = pd.read_csv(test_data_path.as_posix(), header=None, delimiter=' ')
         ids.extend([f'{1000*i+j}' for j in test_df.index.tolist()])
         
-        x_te = test_df.values
         if params.use_kernel:
+            x_te = test_df
             print(f'computing kernel matrix for testing data...')
             K_te = get_kernel_matrix(x_tr, x_te, params)
             print(f'using fitted classifier to make prediction on testing data...')
             preds = clf.predict(K_te)
         else:
+            x_te = test_df.values
             print(f'using fitted classifier to make prediction on testing data...')
             preds = clf.predict(x_te)
         bounds.extend([int(p) for p in preds.tolist()])

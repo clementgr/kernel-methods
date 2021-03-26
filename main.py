@@ -71,7 +71,7 @@ if params.val_before_train:
             pred_val = clf.predict(x_val)
         acc_tr = accuracy(pred_tr, y_tr)
         acc_val = accuracy(pred_val, y_val)
-        print(f'classifier: {classifier_name} | dataset: {k} | training accuracy: {acc_tr} | validation accuracy: {acc_val}')
+        print(f'classifier: {classifier_name} | dataset: {k} | training accuracy: {acc_tr:.3f} | validation accuracy: {acc_val:.3f}')
     print()
 
 # get predictions on test datasets
