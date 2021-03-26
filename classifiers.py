@@ -28,13 +28,13 @@ class LogisticRegression:
             X = self.add_intercept(X)
         
         # weights initialization
-        self.params = np.zeros(X.shape[1])
+        self.parameters = np.zeros(X.shape[1])
         
         for i in range(self.num_iter):
-            z = np.dot(X, self.params)
+            z = np.dot(X, self.parameters)
             y_pred = self.sigmoid(z)
             grad = np.dot(X.T, (y_pred - y)) / y.size
-            self.params = self.params - self.lr * grad
+            self.parameters = self.parameters - self.lr * grad
             
             if self.verbose and i % self.print_freq == 0:
                 sys.stdout.write(f'\rstep {i}/{self.num_iter} | loss = {self.loss_function(y_pred, y):.3f}')
@@ -44,7 +44,7 @@ class LogisticRegression:
         if self.fit_intercept:
             X = self.add_intercept(X)
     
-        return self.sigmoid(np.dot(X, self.params))
+        return self.sigmoid(np.dot(X, self.parameters))
     
     def predict(self, X, threshold=0.5):
         return self.predict_prob(X) >= threshold

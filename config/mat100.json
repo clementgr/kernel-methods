@@ -1,0 +1,18 @@
+{
+    "data_type": "mat100",
+    "data_dir": "data/mat100",
+    "label_dir": "data/labels",
+    "result_dir": "submissions",
+    "seed": 21,
+    "val_size": 0.3,
+    "clf": "lr",
+    "relabel": false,
+    "use_kernel": false,
+    "lr": 0.01,
+    "num_iter": 10000, 
+    "fit_intercept": true,
+    "verbose": true,
+    "print_freq": 1000,
+    "lmbda": 1e-7
+}
+

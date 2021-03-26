@@ -1,0 +1,18 @@
+{
+    "data_type": "raw",
+    "data_dir": "data/raw",
+    "label_dir": "data/labels",
+    "result_dir": "submissions",
+    "seed": 21,
+    "val_size": 0.3,
+    "clf": "ksvm",
+    "relabel": true,
+    "use_kernel": true,
+    "kernel_type": "mismatch",
+    "sigma": 100,
+    "k": 7,
+    "mismatch": 3,
+    "mismatch_weight": 1,
+    "lmbda": 1e-7
+}
+
