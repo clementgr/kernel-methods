@@ -9,11 +9,10 @@
     "clf": "lr",
     "relabel": false,
     "use_kernel": false,
-    "lr": 0.01,
-    "num_iter": 10000, 
+    "lr": 0.1,
+    "num_iter": 100000, 
     "fit_intercept": true,
     "verbose": true,
-    "print_freq": 1000,
-    "lmbda": 1e-7
+    "print_freq": 1000
 }
 
