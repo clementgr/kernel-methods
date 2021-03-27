@@ -21,11 +21,12 @@ print()
 np.random.seed(params.seed)
 name_dict = {'lr': 'Logistic Regression', 'svm': 'SVM', 'krr': 'Kernel Ridge Regression', 'ksvm': 'Kernel SVM'}
 classifier_name = name_dict[params.clf]
-if params.use_kernel:
+if hasattr(params, 'k'):
     if isinstance(params.k, int):
         k_list = [params.k]*3
     else:
         k_list = params.k
+if hasattr(params, 'lmbda'):
     if not isinstance(params.lmbda, list):
         lmbda_list = [params.lmbda]*3
     else:
@@ -58,8 +59,10 @@ if params.val_before_train:
         x_tr, y_tr = data_train, labels_train['Bound'].values
         x_val, y_val = data_val, labels_val['Bound'].values
         if params.use_kernel:
-            params.k = k_list[k]
-            params.lmbda = lmbda_list[k]
+            if hasattr(params, 'k'):
+                params.k = k_list[k]
+            if hasattr(params, 'lmbda'):
+                params.lmbda = lmbda_list[k]
             K_tr = get_kernel_matrix(x_tr, x_tr, params)
             K_tr_val = get_kernel_matrix(x_tr, x_val, params)
             clf = get_kernel_classsifier(K_tr, params)

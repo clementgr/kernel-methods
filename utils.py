@@ -147,8 +147,10 @@ def generate_test_predictions(data, labels, params, classifier_name='classifier'
         
         if params.use_kernel:
 
-            params.k = k_list[i]
-            params.lmbda = lmbda_list[i]
+            if hasattr(params, 'k'):
+                params.k = k_list[i]
+            if hasattr(params, 'lmbda'):
+                params.lmbda = lmbda_list[i]
             
             print(f'computing kernel matrix for training data...')
             K_tr = get_kernel_matrix(x_tr, x_tr, params)
