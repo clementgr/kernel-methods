@@ -26,13 +26,15 @@ if hasattr(params, 'k'):
         k_list = [params.k]*3
     else:
         k_list = params.k
+else:
+    k_list = None
 if hasattr(params, 'lmbda'):
     if not isinstance(params.lmbda, list):
         lmbda_list = [params.lmbda]*3
     else:
         lmbda_list = params.lmbda
 else:
-    k_list, lmbda_list = None, None
+    lmbda_list = None
 
 # loading data
 data = []

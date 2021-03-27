@@ -118,7 +118,7 @@ def mismatch_kernel(x1, x2, k=6, mismatch=1, mismatch_weight=1):
 
 def get_kernel_matrix(x1, x2, params):
     if params.kernel_type == 'rbf':
-        K = RBF_kerne(x1, x2, params.sigma)
+        K = RBF_kernel(x1, x2, params.sigma)
     elif params.kernel_type == 'spectrum':
         K = spectrum_kernel(x1, x2, params.k)
     elif params.kernel_type == 'mismatch':
