@@ -1,6 +1,6 @@
 {
-    "data_type": "raw",
-    "data_dir": "data/raw",
+    "data_type": "mat100",
+    "data_dir": "data/mat100",
     "label_dir": "data/labels",
     "result_dir": "submissions",
     "seed": 21,
