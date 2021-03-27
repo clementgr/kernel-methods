@@ -128,7 +128,7 @@ def get_kernel_matrix(x1, x2, params):
     return K
 
 
-def generate_test_predictions(data, labels, params, k_list=None, lmbda_list=None):
+def generate_test_predictions(data, labels, params, classifier_name='classifier', k_list=None, lmbda_list=None):
     ids = []
     bounds = []
     for i, (x_tr, y_tr) in enumerate(zip(data, labels)):
@@ -152,24 +152,25 @@ def generate_test_predictions(data, labels, params, k_list=None, lmbda_list=None
             
             print(f'computing kernel matrix for training data...')
             K_tr = get_kernel_matrix(x_tr, x_tr, params)
-            print(f'fitting classifier on training data...')
+            print(f'fitting {classifier_name} on training data...')
             clf = get_kernel_classsifier(K_tr, params)
             clf.fit(y_tr)
 
             x_te = test_df
             print(f'computing kernel matrix for testing data...')
             K_te = get_kernel_matrix(x_tr, x_te, params)
-            print(f'using fitted classifier to make prediction on testing data...')
+            print(f'using fitted {classifier_name} to make prediction on testing data...')
             preds = clf.predict(K_te)
         
         else:
             
-            print(f'fitting classifier on training data...')
+            x_tr = x_tr.values
+            print(f'fitting {classifier_name} on training data...')
             clf = get_classsifier(x_tr, y_tr, params)
             clf.fit(x_tr, y_tr)
 
             x_te = test_df.values
-            print(f'using fitted classifier to make prediction on testing data...')
+            print(f'using fitted {classifier_name} to make prediction on testing data...')
             preds = clf.predict(x_te)
         
         bounds.extend([int(p) for p in preds.tolist()])

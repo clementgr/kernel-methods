@@ -44,7 +44,7 @@
 	\maketitle
 	
 	\begin{abstract}
-		In this report, I emphasize my work for the challenge organized as part of the Kernel Methods class. The goal of the challenge was to learn how to implement kernel-based machine learning algorithms, gain understanding about them and adapt them to structural data. To that end, teachers chose a DNA sequence classification task. Through iterations in model definition and data representation, I highlight the pros and cons of the different methods I tried, resulting in a $0.65200$ classification accuracy on the public leaderboard and $0.64733$ on the private leaderboard. My code is publicly available at \small{\url{https://github.com/clementgr/kernel-methods}}
+		In this report, I emphasize my work for the challenge organized as part of the Kernel Methods class. The goal of the challenge was to learn how to implement kernel-based machine learning algorithms, gain understanding about them and adapt them to structural data. To that end, teachers chose a DNA sequence classification task. My code is publicly available at \small{\url{https://github.com/clementgr/kernel-methods}}
 	\end{abstract}
 	
 	\vspace{-3mm}
@@ -55,13 +55,13 @@
 	\\
 	\textbf{Dataset:} we had to work with three datasets corresponding to three different transcription factors. Each training set contained $2000$ sequences, while each testing set contained $1000$. Predictions had to be made separately for each train-test dataset pair.\\
 	\\
-	\textbf{Evaluation Metric:} the performance is measured using the classification accuracy. The final score is computed by taking the average of the scores from public and private leaderboards.
+	\textbf{Evaluation Metric:} the performance is measured using the classification accuracy.
 	
 	\section{Classifiers}
 	
 	I implemented different classifiers for the sequence classification task. Each classifier aims at solving the following optimization problem, each with a different loss function $\ell$:
 
-	\vspace{-1mm}
+	\vspace{-1.5mm}
 	
 	\begin{equation*}\tag{$\star$}
 		\begin{aligned}
@@ -69,22 +69,13 @@
 		\end{aligned}
 	\end{equation*}
 
+	\vspace{0.5mm}
+
 	\subsection{Logistic Regression}
 	
-	Logistic regression is an algorithm often used in machine learning problems, which models the probability that a given input belongs to one of two different classes (binary classification). It can be viewed as solving $(\star)$ with the specific logistic loss:
+	Logistic regression is an algorithm often used in machine learning problems, which models the probability that a given input belongs to one of two different classes (binary classification). It can be viewed as solving $(\star)$ with the logistic loss $\ell  \left( f(x), y \right) = \ln \left(1+e^{-yf(x)} \right)$ and the functionnal space:
 	
-	\vspace{-2mm}
-	
-	\begin{equation*}
-		\begin{aligned}
-			\ell  \left( f(x), y \right) = \ln \left(1+e^{-yf(x)} \right)
-		\end{aligned}
-	\end{equation*}
-	
-	\noindent
-	and the functionnal space:
-	
-	\vspace{-4mm}
+	\vspace{-5mm}
 	
 	\begin{equation*}
 		\begin{aligned}
@@ -97,42 +88,12 @@
 	
 	\subsection{Support Vector Machine} 
 	
-	Support Vector Machine (SVM) is another supervised learning model soft, which can be viewed as solving $(\star)$ with the specific hinge loss:
-	
-	\vspace{-2mm}
-	
-	\begin{equation*}
-		\begin{aligned}
-			\ell  \left( f(x), y \right) = \max \left(1-yf(x), 0 \right)
-		\end{aligned}
-	\end{equation*}
-	
-	\noindent
-	This time, the objective function of $(\star)$ is not smooth. Hence, it's common practice to introduce slack variables to reformulate $(\star)$ as a quadratic program, that is the minimization of a convex quadratic function with linear constraints:
-	
-	\begin{equation*}\tag{\text{SVM}}
-		\begin{aligned}
-			\min_{w,z} \quad & \dfrac{1}{2} \vert\vert w \vert\vert_{2}^{2} + C \cdot \mathbbm{1}^T z \\
-			\textrm{s.t.} \quad & y_i(w^Tx_i) \geq 1 - z_i \\
-			& z \geq 0
-		\end{aligned}
-	\end{equation*}
-	\noindent
-	Quadratic programs are efficiently solved using any optimization package. I chose \texttt{convexopt}.
+	Support Vector Machine (SVM) is another supervised learning model, which can be viewed as solving $(\star)$ with the hinge loss:  $\ell  \left( f(x), y \right) = \max \left(1-yf(x), 0 \right)$. This time, the objective function of $(\star)$ is not smooth. Hence, it's common practice to introduce slack variables to reformulate $(\star)$ as a quadratic program, that is the minimization of a convex quadratic function with linear constraints. Quadratic programs are efficiently solved using any optimization package. I used \texttt{convexopt}.
 	
 	\subsection{Kernel Ridge Regression}
 	
-	If we consider $\mathcal{H}$ a RKHS associated to a p.d. kernel $\mathbf{K}$ on $\mathcal{X}$, then Kernel Ridge Regression is obtained by regularizing the MSE criterion by the RKHS norm. 
-	
-	\begin{equation*}\tag{$\text{KRR}$}
-		\begin{aligned}
-			\min_{f \in \mathcal{H}}  \hspace{1mm} \dfrac{1}{n} \sum_{i=1}^{n}  \left( f(x_i) - y_i \right)^2 + \lambda \vert \vert f \vert \vert_\mathcal{H}^2
-		\end{aligned}
-	\end{equation*}
-	
-	\noindent
-	By the representer theorem, (KRR) is equivalent to:
-	\vspace{-2mm}
+	If we consider $\mathcal{H}$ a RKHS associated to a p.d. kernel $\mathbf{K}$ on $\mathcal{X}$, then Kernel Ridge Regression (KRR) is obtained by regularizing the MSE criterion by the RKHS norm.	By the representer theorem, KRR is equivalent to:
+	\vspace{-4mm}
 		
 	\begin{equation*}
 		\underset{\boldsymbol{\alpha} \in \mathbb{R}^{n}}{\min } \textit{ } \frac{1}{n}(\mathbf{K} \boldsymbol{\alpha}-\mathbf{y})^{\top}(\mathbf{K} \boldsymbol{\alpha}-\mathbf{y})+\lambda \boldsymbol{\alpha}^{\top} \mathbf{K} \boldsymbol{\alpha}
@@ -148,8 +109,8 @@
 	
 	\subsection{Kernel SVM} 
 	
-	Here again, considering $\mathcal{H}$ a RKHS associated to a p.d. kernel $\mathbf{K}$ on $\mathcal{X}$, then Kernel SVM is obtained by rewriting (SVM) using the representer theorem. This gives a quadratic program in $\boldsymbol{\alpha}$:
-	\vspace{-8mm}
+	Here again, considering $\mathcal{H}$ a RKHS associated to a p.d. kernel $\mathbf{K}$ on $\mathcal{X}$, then Kernel SVM algorithm is obtained by rewriting SVM's quadratic program using the representer theorem. This gives another QP, this time in $\boldsymbol{\alpha}$:
+	\vspace{-7mm}
 	\begin{center}
 			\begin{equation*}\tag{\text{kSVM}}
 				\begin{aligned}
@@ -159,42 +120,69 @@
 			\end{equation*}	
 	\end{center}
 	\noindent
-	Again, I used \texttt{cvxpy} to solve this problem.
+	I used \texttt{cvxpy} to solve this problem.
 	
 	
 	\section{Working with Numeric Data}
 	
-	Teachers provided us with numerical feature matrices based on bag of words representation. 
-	
 	\subsection{Logistic Regression Baseline}
 	
-	The idea was to have reference results against which I could compare the performances of the more sophisticated models I would later develop. I decided to go with a simple baseline: train a logistic regression on the numerical feature matrices provided by the teachers. This achieved $0.60466$ on the public academic leaderboard.
+	The idea was to have a reference result against which I could compare the performances of the more sophisticated models I would later develop. I decided to go with a simple baseline: train a logistic regression on the numerical feature matrices provided by the teachers. This achieved $0.60466$ on the public leaderboard, and $0.58666$ on the private leaderboard.
 	
 	\subsection{Switching to Support Vector Machines}
-		
+	
+	I then shifted to Support Vector Machines. Prior to fitting this model, I re-labeled inputs from $\{0, 1\}$ to $\{ -1, 1\}$. I tried both plain SVM and C-SVM and didn't observe any signficant difference. In the end, C-SVM with C=$10$ performed just as well as the logistic regression, reaching $0.60333$ on the public leaderboard, and $0.58666$ on the private leaderboard.
 	
 	\subsection{Using the Radial-basis Function Kernel}
 	
+	Enough working with raw numerical feature matrices, time to use some kernels! I moved from linear to nonlinear classifiers using the Radial-basis Function Kernel (RBF), which maps data points to Gaussian functions living in a Hilbert space $\mathcal{H}$. The RBF kernel with bandwidth $\sigma$ is given by:
+	\vspace{-0.2mm}
+	\begin{equation*}
+		\begin{aligned}
+			\mathbf{K}(\mathbf{x}, \mathbf{y})=e^{-\frac{\|\mathbf{x}-\mathbf{y}\|^{2}}{2 \sigma^{2}}}
+		\end{aligned}
+	\end{equation*}
+	\noindent
+	Once data points were mapped to $\mathcal{H}$, I solved the classification task using: 
+	
+	\begin{itemize}
+		\item Kernel Ridge Regression: best results were achieved for $\sigma = 100$ and regularization parameter $\lambda = 10^{-7}$. This translated into $0.60000$ on the public academic, and $0.59733$ on the private leaderboard,
+		\item Kernel SVM: best results were achieved for $\sigma = 100$ and $\lambda = 10^{-8}$. This translated into $0.61000$ on the public academic, and $0.59933$ on the private leaderboard, slightly outperforming previous results.
+	\end{itemize} 
+	\noindent
+	Optimal hyperparameters $\sigma$ and $\lambda$ were found by finetuning on $30\%$ of the training data, set aside as validation set.
+	
 	\section{Working with Raw DNA Sequences}
 	
-	\subsection{k-Spectrum Kernel}
+	Once I had finished experimenting with numerical data, I started working with the raw DNA sequences. The goal was to design kernels suited for strings. I decided to go with two kernels based on substring indexation.
 	
-	\cite{spectrum}
+	\subsection{Spectrum Kernel}
+	
+	The spectrum kernel \cite{spectrum} is a sequence-similarity kernel. Given an integer $k \geq 1$, the $k$-spectrum of an input sequence is the set of all the $k$-length subsequences that it contains. If we denote by $\phi_a(k)$ the number of times the subsequence $a$ occurs in sequence $x$, and $ \mathcal{A}^k$ all possible subsequences of length $k$ from alphabet $\mathcal{A}$, the $k$-spectrum kernel is given by:
+	\vspace{-0.1mm}
+	\begin{equation*}
+		\begin{aligned}
+			\mathbf{K}_k (x, y) = \left\langle \Phi_k (x), \Phi_k (y) \right\rangle
+		\end{aligned}
+	\end{equation*}
+	
+	\noindent
+	 where $\Phi_k (x) = \left( \phi_a(k)  \right)_{a \in \mathcal{A}^k}$. This kernel has the advantage of being relatively simple to implememt and fast to compute. I used Kernel SVM and fine-tuned the parameters $k$ and $\lambda$ using the $30\%$ validation set (Figure \ref{fig:acc_spectrum} and \ref{fig:lambda_spectrum}). The best results were achieved with $k=6$, giving a public score of $0.65400$ and a private score of $0.64066$.
 	
 	\subsection{Mismatch Kernel}
 	
-	\cite{mismatch}
-
+	The mismatch kernel \cite{mismatch} is a variant of the spectrum kernel which allows subsequences of a given length to have one -- or more -- mismatch in the compared sub-sequences. When applied to DNA, it's comes down to accounting for small mutations to persists between sequences, hence providing a biologically motivated way to compare protein sequences. Once again, I used Kernel SVM and fine-tuned the parameters $k$, $m$ (number of mismatch allowed) and $\lambda$ using the $30\%$ validation set (Figure \ref{fig:acc_mismatch} and \ref{fig:lambda_mismatch}). The best results were achieved with $k_0=8$, $k_1 = k_2 = 9$ and $m=1$, giving a public score of $0.65200$ and a private score of $0.64733$, the best score I managed to get (in average).
 	
 	\section{Conclusion}
 	
+	Through iterations in model definition and data representation, I highlight the pros and cons of the different methods I tried. In the end, I got my best score using the mismatch kernel: $0.65200$ classification accuracy on the public leaderboard and $0.64733$ on the private leaderboard. 
 	
 	{\small
 		\bibliographystyle{unsrt}
 		\bibliography{egbib}
 	}
 	
-	\clearpage
+	\newpage
 	
 	\begin{figure}[h!]
 	\centering

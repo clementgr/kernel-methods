@@ -30,6 +30,8 @@ if params.use_kernel:
         lmbda_list = [params.lmbda]*3
     else:
         lmbda_list = params.lmbda
+else:
+    k_list, lmbda_list = None, None
 
 # loading data
 data = []
@@ -77,7 +79,7 @@ if params.val_before_train:
 
 # get predictions on test datasets
 print('generating prediction on test datasets\n')
-test_preds_df = generate_test_predictions(data, labels, params, k_list, lmbda_list)
+test_preds_df = generate_test_predictions(data, labels, params, classifier_name, k_list, lmbda_list)
 submission_name = get_submission_name(params)
 sumbission_path = Path(params.result_dir, submission_name)
 sumbission_path.parent.mkdir(parents=True, exist_ok=True)

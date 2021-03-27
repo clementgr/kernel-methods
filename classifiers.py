@@ -85,7 +85,7 @@ class softSVM:
  
     def predict(self, X):
         preds = np.sign((X @ self.primal_sol) + self.bias).T
-        return np.array([int(p==1) for p in preds.tolist()[0]])
+        return preds[0]
 
 
 class KernelRidgeRegression:
