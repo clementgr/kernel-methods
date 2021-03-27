@@ -1,0 +1,15 @@
+{
+    "data_type": "raw",
+    "data_dir": "data/raw",
+    "label_dir": "data/labels",
+    "result_dir": "submissions",
+    "seed": 21,
+    "val_before_train": false,
+    "val_size": 0.3,
+    "clf": "ksvm",
+    "relabel": true,
+    "use_kernel": true,
+    "kernel_type": "rbf",
+    "sigma": 100,
+    "lmbda": 1e-8
+}

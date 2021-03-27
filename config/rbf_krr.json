@@ -6,11 +6,10 @@
     "seed": 21,
     "val_before_train": false,
     "val_size": 0.3,
-    "clf": "ksvm",
+    "clf": "krr",
     "relabel": true,
     "use_kernel": true,
-    "kernel_type": "spectrum",
-    "k": 7,
-    "lmbda": 5e-2
+    "kernel_type": "rbf",
+    "sigma": 100,
+    "lmbda": 1e-7
 }
-
