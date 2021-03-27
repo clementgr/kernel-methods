@@ -1,5 +1,6 @@
 # Kernel Methods
 Data challenge: predicting whether a DNA sequence region is binding site to a specific transcription factor<br>
+More info about the challenge available [here](https://www.kaggle.com/c/machine-learning-with-kernel-methods-2021/overview)<br>
 Best score achieved using mismtach kernel, resulting in `0.64733` / `0.65200`  public / private score
 
 # How to reproduce results?
